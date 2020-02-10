@@ -9,6 +9,10 @@
 SoftwareSerial mySoftwareSerial(2, 3); // RX, TX
 uint16_t numTracksInFolder;
 uint16_t currentTrack;
+uint8_t volume;
+uint8_t maxVolume;
+uint8_t minVolume;
+uint8_t initVolume;
 
 // this object stores nfc tag data
 struct nfcTagObject {
@@ -190,7 +194,7 @@ void setup() {
                         // Schnittstelle
   randomSeed(analogRead(A0)); // Zufallsgenerator initialisieren
 
-  Serial.println(F("TonUINO Version 2.0"));
+  Serial.println(F("TonUINO Version 2.0 Momos Maxvolume patch"));
   Serial.println(F("(c) Thorsten Voß"));
 
   // Knöpfe mit PullUp
@@ -203,8 +207,14 @@ void setup() {
 
   // DFPlayer Mini initialisieren
   mp3.begin();
-  mp3.setVolume(15);
-
+  
+  maxVolume=26;
+  minVolume=5;
+  initVolume=15;
+  
+  mp3.setVolume(initVolume);
+  volume=initVolume;
+  
   // NFC Leser initialisieren
   SPI.begin();        // Init SPI bus
   mfrc522.PCD_Init(); // Init MFRC522
@@ -260,7 +270,11 @@ void loop() {
 
     if (upButton.pressedFor(LONG_PRESS)) {
       Serial.println(F("Volume Up"));
-      mp3.increaseVolume();
+      if (volume <= maxVolume) {
+        volume++;
+        mp3.increaseVolume();
+      }
+      Serial.println(volume);
       ignoreUpButton = true;
     } else if (upButton.wasReleased()) {
       if (!ignoreUpButton)
@@ -271,7 +285,11 @@ void loop() {
 
     if (downButton.pressedFor(LONG_PRESS)) {
       Serial.println(F("Volume Down"));
-      mp3.decreaseVolume();
+      if (volume >= minVolume) {
+        volume--;
+        mp3.decreaseVolume();
+      }
+      Serial.println(volume);
       ignoreDownButton = true;
     } else if (downButton.wasReleased()) {
       if (!ignoreDownButton)
