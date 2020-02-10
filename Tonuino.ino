@@ -194,7 +194,7 @@ void setup() {
                         // Schnittstelle
   randomSeed(analogRead(A0)); // Zufallsgenerator initialisieren
 
-  Serial.println(F("TonUINO Version 2.0"));
+  Serial.println(F("TonUINO Version 2.0 Momos Maxvolume patch"));
   Serial.println(F("(c) Thorsten Voß"));
 
   // Knöpfe mit PullUp
